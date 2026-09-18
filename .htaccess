@@ -1,0 +1,49 @@
+# Security headers (parity with uphsledu/online_payment/.htaccess:1-8)
+<IfModule mod_headers.c>
+Header set X-Robots-Tag "noindex, nofollow, noarchive, nosnippet, noimageindex"
+Header always set X-Frame-Options "SAMEORIGIN"
+Header always set X-Content-Type-Options "nosniff"
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+Header always set X-XSS-Protection "1; mode=block"
+</IfModule>
+<Files "error_log">
+Order allow,deny
+Deny from all
+</Files>
+<Files "*.log">
+Order allow,deny
+Deny from all
+</Files>
+<Files "*.sql">
+Order allow,deny
+Deny from all
+</Files>
+
+Options -Indexes
+<IfModule mod_autoindex.c>
+  IndexIgnore *
+</IfModule>
+RewriteEngine On
+
+# Fix conflict: instructions.php vs instructions/ folder (legacy images) — force clean URL to PHP
+RewriteRule ^instructions/?$ instructions.php [L]
+
+# Block directory browsing explicitly — any directory without index.php returns 403
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteCond %{REQUEST_FILENAME}/index.php !-f
+RewriteCond %{REQUEST_FILENAME}/index.html !-f
+RewriteRule ^ - [F]
+
+# 1) External redirect: *.php -> clean URL (without .php) for GET only
+RewriteCond %{THE_REQUEST} \s(.+?)\.php[\s?] [NC]
+RewriteCond %{REQUEST_METHOD} !POST
+RewriteRule ^(.+)\.php$ $1 [R=301,L,NE]
+
+# 2) Internal rewrite: clean URL -> .php if the php file exists
+#    Supports /new-enrollee, /enrolled, /other, /checkout, /admin/students, /admin/monitoring, /admin/login etc.
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.+)$ $1.php [L]
+
+# 3) Allow directory index
+DirectoryIndex index.php

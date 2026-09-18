@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Marketing Content Editor</title>
+        <!-- Include TinyMCE from CDN -->
+        <script src="https://cdn.tiny.cloud/1/yf8sq7iyrwrd23gwpjyo8ppuwyjj0d5mm4m8fn71ki47is7i/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+        <style>
+            #content {
+                border: 1px solid #ccc;
+                padding: 20px;
+                margin-top: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Marketing Content Editor</h1>
+        <textarea id="editor"></textarea>
+        <button onclick="postContent()">Post Content</button>
+<form name="formmain" method="get">
+        <div id="content"></div>
+        <button>Save Content</button>
+</form>
+        <script>
+            // Initialize TinyMCE editor
+            tinymce.init({
+                selector: '#editor',
+                height: 300,
+                menubar: false,
+                plugins: [
+                    'advlist autolink lists link image charmap print preview anchor',
+                    'searchreplace visualblocks code fullscreen',
+                    'insertdatetime media table paste code help wordcount'
+                ],
+                toolbar: 'undo redo | formatselect | bold italic backcolor | \
+                          alignleft aligncenter alignright alignjustify | \
+                          bullist numlist outdent indent | removeformat | help'
+            });
+
+            // Function to post content
+            function postContent() {
+                const content = tinymce.get('editor').getContent();
+                document.getElementById('content').innerHTML = content;
+            }
+        </script>
+    </body>
+    </html>
