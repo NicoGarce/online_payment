@@ -18,6 +18,7 @@ function mapCampusToTable($campid) {
 }
 
 function tableExists($con, $tableName) {
+    if (!$con) { return false; }
     if (trim($tableName) === '') { return false; }
     $t = mysqli_real_escape_string($con, $tableName);
     $sql = "SELECT 1 FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name='".$t."' LIMIT 1";

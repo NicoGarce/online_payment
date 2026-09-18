@@ -4,6 +4,7 @@ require_once __DIR__ . '/includes/config.php';
 $selected_campus = isset($_GET['campus']) ? strtoupper(trim($_GET['campus'])) : '';
 
 function findStudentByNumber($con,$studentNumber,$campid){
+    if(!$con) return null;
     $studentNumber=trim($studentNumber);
     if($studentNumber==='') return null;
     $table=mapCampusToTable($campid);
