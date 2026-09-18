@@ -23,26 +23,27 @@ if (!isset($GLOBALS['payments_base'])) {
     $host = $_SERVER['HTTP_HOST'] ?? '';
     $uri  = $_SERVER['REQUEST_URI'] ?? '';
     $script = $_SERVER['SCRIPT_NAME'] ?? '';
+    $reqPath = parse_url($uri, PHP_URL_PATH) ?: '';
     // Dedicated subdomain = root
     if (strpos($host, 'pay.uphsl.edu.ph') !== false || strpos($host, 'online_payment') !== false) {
         $GLOBALS['payments_base'] = '/';
-    } elseif (preg_match('#^/([^/]+)/#', $script, $m)) {
-        $seg = $m[1];
-        // If first segment looks like a folder (no dot), use it as base - works for pay, online_payment, olpay, olp, etc.
-        if (strpos($seg, '.') === false) {
-            $GLOBALS['payments_base'] = '/' . $seg . '/';
-        } else {
-            $GLOBALS['payments_base'] = '/';
-        }
-    } elseif (preg_match('#^/([^/]+)/#', $uri, $m)) {
-        $seg = $m[1];
-        if (strpos($seg, '.') === false) {
-            $GLOBALS['payments_base'] = '/' . $seg . '/';
-        } else {
-            $GLOBALS['payments_base'] = '/';
-        }
     } else {
-        $GLOBALS['payments_base'] = '/';
+        // Prefer the URL the client actually requested (REQUEST_URI) over SCRIPT_NAME,
+        // since SCRIPT_NAME may resolve to the server's internal folder name (e.g. /olp/)
+        // that is not publicly reachable. SCRIPT_NAME remains as fallback for CLI/cron runs.
+        foreach (array_unique(array_filter([$reqPath, $script])) as $candidate) {
+            if (preg_match('#^/([^/]+)(?:/|$)#', $candidate, $m)) {
+                $seg = $m[1];
+                // If first segment looks like a folder (no dot), use it as base - works for pay, online_payment, olpay, olp, etc.
+                if (strpos($seg, '.') === false) {
+                    $GLOBALS['payments_base'] = '/' . $seg . '/';
+                    break;
+                }
+            }
+        }
+        if (!isset($GLOBALS['payments_base'])) {
+            $GLOBALS['payments_base'] = '/';
+        }
     }
 }
 $payments_base = $GLOBALS['payments_base'];
