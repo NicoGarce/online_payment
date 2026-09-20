@@ -17,6 +17,9 @@ define('ENV_TEST', 0);
 define('ENV_LIVE', 1);
 
 $environment = (defined('DRAGONPAY_ENV') && DRAGONPAY_ENV === 'test') ? ENV_TEST : ENV_LIVE;
+$returnUrl = defined('DRAGONPAY_RETURN_URL')
+  ? DRAGONPAY_RETURN_URL
+  : 'https://uphsl.edu.ph/online_payment/retback';
 
 $payee = $_GET['payee'] ?? ($_GET['payee_name'] ?? '');
 $transid = $_GET['transid'] ?? '';
@@ -104,6 +107,7 @@ if (isset($_POST['submit'])) {
         if (strpos($parameters['description'], 'OLP') === false) {
             $parameters['description'] .= ' | OLP';
         }
+        $parameters['returnurl'] = $returnUrl;
         @mysqli_query($con, "INSERT INTO return_data (txnid) VALUES('".mysqli_real_escape_string($con,$parameters['txnid'])."')");
         $parameters['key'] = MERCHANT_PASSWORD;
         $digest_string = implode(':', $parameters);
