@@ -107,7 +107,6 @@ if (isset($_POST['submit'])) {
         if (strpos($parameters['description'], 'OLP') === false) {
             $parameters['description'] .= ' | OLP';
         }
-        $parameters['returnurl'] = $returnUrl;
         @mysqli_query($con, "INSERT INTO return_data (txnid) VALUES('".mysqli_real_escape_string($con,$parameters['txnid'])."')");
         $parameters['key'] = MERCHANT_PASSWORD;
         $digest_string = implode(':', $parameters);
@@ -115,7 +114,8 @@ if (isset($_POST['submit'])) {
         $parameters['digest'] = sha1($digest_string);
         $url = ($environment==ENV_TEST) ? 'http://test.dragonpay.ph/Pay.aspx?' : 'https://gw.dragonpay.ph/Pay.aspx?';
         $params = "&param1=".$parameters['amount']."&param2=".$parameters['description'];
-        $url .= http_build_query($parameters,'','&').$params;
+        // returnurl is a gateway routing option, not part of DragonPay's digest input.
+        $url .= http_build_query($parameters,'','&').$params.'&returnurl='.rawurlencode($returnUrl);
         header("Location: $url"); exit;
     }
 }
