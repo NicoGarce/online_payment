@@ -2,8 +2,8 @@
 // retback_ts — legacy test return, aligned with retback.php minimal UI
 $page_title = "Payment Result";
 require_once __DIR__ . '/includes/config.php';
-if (is_file(__DIR__ . '/app/config/dragonpay.php')) { require_once __DIR__ . '/app/config/dragonpay.php'; }
-if (!defined('MERCHANT_PASSWORD') && defined('DRAGONPAY_MERCHANT_PASSWORD')) define('MERCHANT_PASSWORD', DRAGONPAY_MERCHANT_PASSWORD);
+// Legacy/simple setup: keep the merchant password locally to match the original working build.
+if (!defined('MERCHANT_PASSWORD')) define('MERCHANT_PASSWORD', 'uSw92BkgTsVRqZT');
 
 $s = "";
 $status = strtoupper(trim($_GET["status"] ?? ""));

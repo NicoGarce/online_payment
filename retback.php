@@ -11,11 +11,8 @@
 $page_title = "Payment Result";
 require_once __DIR__ . '/includes/config.php';
 
-// Load DragonPay secret if available (for optional digest verification — never fatal)
-if (is_file(__DIR__ . '/app/config/dragonpay.php')) { require_once __DIR__ . '/app/config/dragonpay.php'; }
-if (!defined('MERCHANT_PASSWORD') && defined('DRAGONPAY_MERCHANT_PASSWORD')) {
-    define('MERCHANT_PASSWORD', DRAGONPAY_MERCHANT_PASSWORD);
-}
+// Legacy/simple setup: keep the merchant password locally to match the original build.
+if (!defined('MERCHANT_PASSWORD')) define('MERCHANT_PASSWORD', 'uSw92BkgTsVRqZT');
 
 // ------------------------------------------------------------------
 // 1) Normalize inputs (GET is DragonPay's redirect; be tolerant)

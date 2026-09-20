@@ -2,15 +2,10 @@
 $page_title = "Checkout - Secure Payment";
 require_once __DIR__ . '/includes/config.php';
 
-// DragonPay credentials — MUST be in ignored config (app/config/dragonpay.php), never here
-// Create that file from dragonpay.example.php — it is .gitignored so secrets never commit
-if (is_file(__DIR__ . '/app/config/dragonpay.php')) { require_once __DIR__ . '/app/config/dragonpay.php'; }
-if (!defined('MERCHANT_ID') && defined('DRAGONPAY_MERCHANT_ID')) define('MERCHANT_ID', DRAGONPAY_MERCHANT_ID);
-if (!defined('MERCHANT_PASSWORD') && defined('DRAGONPAY_MERCHANT_PASSWORD')) define('MERCHANT_PASSWORD', DRAGONPAY_MERCHANT_PASSWORD);
-if (!defined('MERCHANT_ID') || !defined('MERCHANT_PASSWORD')) {
-    http_response_code(500);
-    die("DragonPay not configured — create app/config/dragonpay.php from dragonpay.example.php");
-}
+// Legacy/simple setup: keep merchant credentials directly in the app, matching the original working build.
+if (!defined('MERCHANT_ID')) define('MERCHANT_ID', 'UPHSLI');
+if (!defined('MERCHANT_PASSWORD')) define('MERCHANT_PASSWORD', 'uSw92BkgTsVRqZT');
+if (!defined('DRAGONPAY_ENV')) define('DRAGONPAY_ENV', 'live');
 
 define('ENV_TEST', 0);
 
