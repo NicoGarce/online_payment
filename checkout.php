@@ -17,9 +17,6 @@ define('ENV_TEST', 0);
 define('ENV_LIVE', 1);
 
 $environment = (defined('DRAGONPAY_ENV') && DRAGONPAY_ENV === 'test') ? ENV_TEST : ENV_LIVE;
-$returnUrl = defined('DRAGONPAY_RETURN_URL')
-  ? DRAGONPAY_RETURN_URL
-  : 'https://uphsl.edu.ph/online_payment/retback';
 
 $payee = $_GET['payee'] ?? ($_GET['payee_name'] ?? '');
 $transid = $_GET['transid'] ?? '';
@@ -114,8 +111,7 @@ if (isset($_POST['submit'])) {
         $parameters['digest'] = sha1($digest_string);
         $url = ($environment==ENV_TEST) ? 'http://test.dragonpay.ph/Pay.aspx?' : 'https://gw.dragonpay.ph/Pay.aspx?';
         $params = "&param1=".$parameters['amount']."&param2=".$parameters['description'];
-        // returnurl is a gateway routing option, not part of DragonPay's digest input.
-        $url .= http_build_query($parameters,'','&').$params.'&returnurl='.rawurlencode($returnUrl);
+        $url .= http_build_query($parameters,'','&').$params;
         header("Location: $url"); exit;
     }
 }

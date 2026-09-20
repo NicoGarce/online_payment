@@ -4,4 +4,3 @@
 define('DRAGONPAY_MERCHANT_ID', 'YOUR_MERCHANT_ID');
 define('DRAGONPAY_MERCHANT_PASSWORD', 'YOUR_MERCHANT_PASSWORD');
 define('DRAGONPAY_ENV', 'live'); // live | test
-define('DRAGONPAY_RETURN_URL', 'https://uphsl.edu.ph/online_payment/retback');
