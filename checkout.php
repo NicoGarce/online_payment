@@ -44,6 +44,11 @@ $fields = [
 ];
 
 if (isset($_POST['submit'])) {
+    if ($type === 'new') {
+        $_POST['descselect'] = 'DOWNPAYMENT';
+        $_POST['desc_others'] = '';
+    }
+
     // count txnid similar to original
     $tid = $transid;
     // recount
@@ -70,7 +75,7 @@ if (isset($_POST['submit'])) {
         $syfrom = trim($_POST['syfrom'] ?? '');
         $sem = trim($_POST['sem'] ?? '');
         $loc = trim($_POST['locno'] ?? $locno);
-        $choice = $desc_others !== '' ? $desc_others : $desc_select;
+        $choice = $type === 'new' ? 'DOWNPAYMENT' : (($desc_others !== '') ? $desc_others : $desc_select);
         if($choice==='') $choice = ($type==='new' ? 'DOWNPAYMENT' : '');
         if ($choice !== '') {
             $id = '';
@@ -114,7 +119,7 @@ if (isset($_POST['submit'])) {
 // Determine particular options per type
 $particulars = [];
 if ($type==='new') {
-    $particulars = ['DOWNPAYMENT','RESERVATION FEE (Basic Education)','RESERVATION FEE (College)'];
+    $particulars = ['DOWNPAYMENT'];
 } elseif ($type==='enrolled') {
     $particulars = ['DOWNPAYMENT','TUITION FEE','BACK ACCOUNT','RESERVATION FEE (Basic Education)','RESERVATION FEE (College)','ACTIVITY FEE','ADDING/DROPPING FEE','ALUMNI ASSOCIATION MEMBERSIP','AUTHENTICATION','BAR UNIFORM','BASIC OCCUPATIONAL SAFETY & HEALTH','BASIC TRAINING','CAV','CERTIFICATE OF BASIC TRAINING','CERTIFICATION','CHANGE','CHEF UNIFORM','CLASS PICTURE','COMPLETION FORM','COPY OF GRADES','COUNCIL FEE','DIPLOMA','GRADUATION FEE','GRADUATION PIN','RESEARCH FEE','TRANSCRIPT OF RECORDS','USC-PE UNIFORM','YEARBOOK'];
 } else {
@@ -152,11 +157,15 @@ require_once __DIR__ . '/includes/header.php';
 
           <div class="field" id="field-particulars">
             <label>Particulars <span style="color:var(--err)">*</span></label>
-            <select name="descselect" id="descselect" required>
+            <select name="descselect" id="descselect" required <?= $type === 'new' ? 'disabled' : '' ?>>
               <option value="">Select particular...</option>
-              <?php foreach($particulars as $p): ?><option value="<?= htmlspecialchars($p) ?>" <?= (($_POST['descselect']??'')===$p?'selected':'') ?>><?= htmlspecialchars($p) ?></option><?php endforeach; ?>
+              <?php foreach($particulars as $p): ?><option value="<?= htmlspecialchars($p) ?>" <?= (($type==='new' ? 'DOWNPAYMENT' : ($_POST['descselect'] ?? ''))===$p ? 'selected' : '') ?><?= $type === 'new' && $p === 'DOWNPAYMENT' ? ' selected' : '' ?>><?= htmlspecialchars($p) ?></option><?php endforeach; ?>
             </select>
-            <input type="text" name="desc_others" id="desc_others" placeholder="If not listed, type custom description here" style="margin-top:8px">
+            <?php if ($type === 'new'): ?>
+              <input type="hidden" name="descselect" value="DOWNPAYMENT">
+            <?php else: ?>
+              <input type="text" name="desc_others" id="desc_others" placeholder="If not listed, type custom description here" style="margin-top:8px">
+            <?php endif; ?>
             <input type="hidden" name="description" id="description">
           </div>
 
